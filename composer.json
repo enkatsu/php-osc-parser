@@ -1,0 +1,23 @@
+{
+  "name": "enkatsu/php-osc-parser",
+  "description": "Simple OSC(Open Sound Control) parser",
+  "keywords": ["OSC"],
+  "type": "library",
+  "license": "MIT",
+  "homepage": "https://github.com/enkatsu/php-osc-parser",
+  "authors": [{
+    "name": "enkatsu",
+    "email": "endkty0509@gmail.com"
+  }],
+  "require": {
+    "tightenco/collect": "v5.7.*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "3.7.*"
+  },
+  "autoload": {
+    "psr-0": {
+      "Enkatsu\\PhpOscParser": "src/"
+    }
+  }
+}
