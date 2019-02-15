@@ -26,4 +26,15 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($num, $result);
         $this->assertEquals($pos, $buf->count());
     }
+
+    public function testFloatRead()
+    {
+        $hex = '40200000';
+        $num = unpack('f', pack('h*', strrev($hex)));
+        $buf = \collect(\array_chunk(str_split($hex), 2));
+        $pos = 0;
+        $result = Reader::parseFloat($buf, $pos);
+        $this->assertEquals($num, $result);
+        $this->assertEquals($pos, $buf->count());
+    }
 }

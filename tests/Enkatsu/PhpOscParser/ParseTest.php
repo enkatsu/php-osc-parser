@@ -5,6 +5,7 @@ class ParseTest extends \PHPUnit_Framework_TestCase
 {
     public function testInstance()
     {
-        $this->assertNull(null);
+        $str = '#bundle';
+        $parser = new Parser();
     }
 }

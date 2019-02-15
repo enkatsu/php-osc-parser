@@ -32,15 +32,15 @@ class Reader
         $pos += 8;
         return $value;
     }
-    // TODO:
-    // public static float ParseFloat(byte[] buf, ref int pos)
-    // {
-    //     Array.Reverse(buf, pos, 4);
-    //     var value = BitConverter.ToSingle(buf, pos);
-    //     pos += 4;
-    //     return value;
-    // }
-    //
+
+    public static function ParseFloat(Collection $buf, int &$pos)
+    {
+        $str = $buf->slice($pos, 4)->flatten()->implode('');
+        $value = unpack("f", pack("h*", strrev($str)));
+        $pos += 4;
+        return $value;
+    }
+
     // public static byte[] ParseBlob(byte[] buf, ref int pos)
     // {
     //     var size = ParseInt(buf, ref pos);
