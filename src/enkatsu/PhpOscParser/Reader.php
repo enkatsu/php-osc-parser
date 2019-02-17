@@ -10,37 +10,31 @@ class Reader
 {
     public static function parseString(Collection $buf, int &$pos): string
     {
-        $size = 0;
-        $bufSize = $buf->count();
-        for (; hexdec($buf->get($pos + $size)) != 0; ++$size);
-        $val = hex2bin($buf->slice($pos, $size)->flatten()->implode(''));
-        $pos += $size;
-        return $val;
+        $lastIndex = $buf->slice($pos)->search(function($data) {
+            $bytes = collect(str_split($data, 2));
+            return $bytes->last() == '00';
+        });
+        $len = $lastIndex - $pos + 1;
+        $val = \pack('H*', $buf->slice($pos, $len)->implode(''));
+        $pos += $len;
+        return \trim($val);
     }
 
     public static function parseInt(Collection $buf, int &$pos): int
     {
-        $val = \hexdec($buf->slice($pos, 4));
-        $pos += 4;
+        $val = \hexdec($buf->get($pos));
+        $pos += 1;
         return $val;
     }
 
-    public static function parseTimetag(Collection $buf, int &$pos): int
+    public static function ParseFloat(Collection $buf, int &$pos)
     {
-        // TODO:
-        $val = \hexdec($buf->slice($pos, 8));
-        $pos += 8;
+        $str = $buf->get($pos);
+        $value = unpack("f", pack("h*", strrev($str)));
+        $pos += 1;
         return $value;
     }
-    // TODO:
-    // public static float ParseFloat(byte[] buf, ref int pos)
-    // {
-    //     Array.Reverse(buf, pos, 4);
-    //     var value = BitConverter.ToSingle(buf, pos);
-    //     pos += 4;
-    //     return value;
-    // }
-    //
+
     // public static byte[] ParseBlob(byte[] buf, ref int pos)
     // {
     //     var size = ParseInt(buf, ref pos);
@@ -49,4 +43,11 @@ class Reader
     //     pos += Util.GetBufferAlignedSize(size);
     //     return value;
     // }
+
+    public static function parseTimetag(Collection $buf, int &$pos): int
+    {
+        $val = \hexdec($buf->slice($pos, 2)->flatten()->implode(''));
+        $pos += 2;
+        return $val;
+    }
 }
