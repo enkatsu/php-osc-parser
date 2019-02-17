@@ -30,7 +30,7 @@ class Reader
     public static function ParseFloat(Collection $buf, int &$pos)
     {
         $str = $buf->get($pos);
-        $value = unpack("f", pack("h*", strrev($str)));
+        $value = unpack("f", pack("h*", strrev($str)))[1];
         $pos += 1;
         return $value;
     }

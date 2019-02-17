@@ -21,9 +21,11 @@ class Parser
         $this->messages = new Collection();
     }
 
-    public function getMessages(): Collection
+    public function flush(): Collection
     {
-        return $this->messages;
+        $bundle = clone $this->messages;
+        $this->messages = new Collection();
+        return $bundle;
     }
 
     public function parse(Collection $buf, int &$pos, int $endPos, int $timestamp=1)
@@ -43,8 +45,6 @@ class Parser
     private function parseBundle(Collection $buf, int &$pos, int $endPos)
     {
         $time = Reader::parseTimetag($buf, $pos);
-        var_dump('$time');
-        var_dump($time);
         while ($pos < $endPos)
         {
             $contentSize = Reader::parseInt($buf, $pos) / 2;
