@@ -33,7 +33,6 @@ class Parser
             $this->parseBundle($buf, $pos, $endPos);
         else
             $this->messages->push(new Message($first, $timestamp, $this->parseData($buf, $pos)));
-
         if ($pos != $endPos)
             error_log("The parsed data size is inconsitent with the given size: ${pos} / ${endPos}".PHP_EOL);
     }
@@ -76,7 +75,6 @@ class Parser
                     break;
             }
         }
-
         return $data;
     }
 }
