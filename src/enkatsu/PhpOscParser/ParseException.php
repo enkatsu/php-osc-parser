@@ -2,4 +2,4 @@
 
 namespace Enkatsu\PhpOscParser;
 
-class ParseException extends Exception { }
+class ParseException extends \Exception { }

@@ -20,11 +20,14 @@ class Parser
 
     public function parse(Collection $buf, int &$pos, int $endPos, int $timestamp=1): ElementInterface
     {
-        $first = Reader::parseString($buf, $pos);
-        if ($first == Identifier::$BUNDLE) return $this->parseBundle($buf, $pos, $endPos);
-        else return new Message($first, $timestamp, $this->parseData($buf, $pos));
+        if ($pos > $endPos)
+            throw new ParseException("The parsed data size is inconsitent with the given size: ${pos} / ${endPos}".PHP_EOL);
 
-        if ($pos != $endPos) throw new ParseException("The parsed data size is inconsitent with the given size: ${pos} / ${endPos}".PHP_EOL);
+        $first = Reader::parseString($buf, $pos);
+        if ($first == Identifier::$BUNDLE)
+            return $this->parseBundle($buf, $pos, $endPos);
+        else
+            return new Message($first, $timestamp, $this->parseData($buf, $pos));
     }
 
     private function parseBundle(Collection $buf, int &$pos, int $endPos): Bundle
@@ -53,10 +56,12 @@ class Parser
     {
         $types = trim(Reader::parseString($buf, $pos), ',');
         if (strlen($types) == 0) return new Collection();
-        $types = collect(str_split($types))->filter(function($type) {
+        $types = collect(str_split($types))->filter(function($type)
+        {
             return in_array($type, [Identifier::$INT, Identifier::$FLOAT, Identifier::$STRING, Identifier::$BLOB]);
         });
-        return $types->map(function($type) use ($buf, &$pos){
+        return $types->map(function($type) use ($buf, &$pos)
+        {
             switch ($type)
             {
                 case Identifier::$INT:
@@ -72,7 +77,7 @@ class Parser
                     return Reader::parseBlob($buf, $pos);
                     break;
                 default:
-                    return null;
+                    throw new ParseException("The parsed data type is undefined: ${type}".PHP_EOL);
                     break;
             }
         });

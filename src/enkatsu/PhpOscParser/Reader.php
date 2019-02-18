@@ -28,7 +28,7 @@ class Reader
         return $val;
     }
 
-    public static function parseFloat(Collection $buf, int &$pos)
+    public static function parseFloat(Collection $buf, int &$pos): float
     {
         $str = $buf->get($pos);
         $value = unpack('f*', pack('h*', strrev($str)))[1];
