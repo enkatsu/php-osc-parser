@@ -21,11 +21,23 @@ class Bundle implements ElementInterface
 
     function push(ElementInterface $element): void
     {
-        $this->elements->push($element);
+        $klass = get_class($element);
+        if($klass == Bundle::class)
+        {
+            $this->elements->push($element);
+        } else if ($klass == Message::class)
+        {
+            $this->elements->put($element->address, $element);
+        }
     }
 
     function getElements(): Collection
     {
         return $this->elements;
+    }
+
+    function getElement($address): ?ElementInterface
+    {
+        return $this->elements->get($address);
     }
 }
