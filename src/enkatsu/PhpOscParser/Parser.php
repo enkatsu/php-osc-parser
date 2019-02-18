@@ -14,26 +14,24 @@ class Identifier
 
 class Parser
 {
-    private $messages;
-
     function __construct()
     {
-        $this->messages = new Collection();
     }
-
-    public function getMessages(): Collection
-    {
-        return $this->messages;
-    }
+    //
+    // public function flush(): Collection
+    // {
+    //     $bundle = clone $this->bundle;
+    //     $this->bundle = new Bundle();
+    //     return $bundle;
+    // }
 
     public function parse(Collection $buf, int &$pos, int $endPos, int $timestamp=1)
     {
         $first = Reader::parseString($buf, $pos);
         if ($first == Identifier::$BUNDLE) {
-            $this->parseBundle($buf, $pos, $endPos);
+            return $this->parseBundle($buf, $pos, $endPos);
         } else {
-            $message = new Message($first, $timestamp, $this->parseData($buf, $pos));
-            $this->messages->push($message);
+            return new Message($first, $timestamp, $this->parseData($buf, $pos));
         }
         if ($pos != $endPos) {
             error_log("The parsed data size is inconsitent with the given size: ${pos} / ${endPos}".PHP_EOL);
@@ -43,12 +41,12 @@ class Parser
     private function parseBundle(Collection $buf, int &$pos, int $endPos)
     {
         $time = Reader::parseTimetag($buf, $pos);
-        var_dump('$time');
-        var_dump($time);
+        $bundle = new Bundle($time);
         while ($pos < $endPos)
         {
             $contentSize = Reader::parseInt($buf, $pos) / 2;
-            $this->parse($buf, $pos, $pos + $contentSize, $time);
+            $element = $this->parse($buf, $pos, $pos + $contentSize, $time);
+            $bundle->push($element);
             // if (Util::isMultipleOfFour($contentSize))
             // {
             //     $this->parse($buf, $pos, $pos + $contentSize, $time);
@@ -59,6 +57,7 @@ class Parser
             //     $pos += $contentSize;
             // }
         }
+        return $bundle;
     }
 
     public function parseData(Collection $buf, int &$pos): Collection
