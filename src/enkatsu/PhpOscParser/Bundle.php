@@ -8,7 +8,7 @@ class Bundle implements ElementInterface
     public $timetag;
     public $elements;
 
-    function __construct($timetag)
+    function __construct(int $timetag)
     {
         $this->elements = new Collection();
     }
@@ -19,7 +19,7 @@ class Bundle implements ElementInterface
         $this->elements = new Collection();
     }
 
-    function push(ElementInterface $element)
+    function push(ElementInterface $element): void
     {
         $this->elements->push($element);
     }

@@ -17,28 +17,17 @@ class Parser
     function __construct()
     {
     }
-    //
-    // public function flush(): Collection
-    // {
-    //     $bundle = clone $this->bundle;
-    //     $this->bundle = new Bundle();
-    //     return $bundle;
-    // }
 
-    public function parse(Collection $buf, int &$pos, int $endPos, int $timestamp=1)
+    public function parse(Collection $buf, int &$pos, int $endPos, int $timestamp=1): ElementInterface
     {
         $first = Reader::parseString($buf, $pos);
-        if ($first == Identifier::$BUNDLE) {
-            return $this->parseBundle($buf, $pos, $endPos);
-        } else {
-            return new Message($first, $timestamp, $this->parseData($buf, $pos));
-        }
-        if ($pos != $endPos) {
-            error_log("The parsed data size is inconsitent with the given size: ${pos} / ${endPos}".PHP_EOL);
-        }
+        if ($first == Identifier::$BUNDLE) return $this->parseBundle($buf, $pos, $endPos);
+        else return new Message($first, $timestamp, $this->parseData($buf, $pos));
+
+        if ($pos != $endPos) throw new ParseException("The parsed data size is inconsitent with the given size: ${pos} / ${endPos}".PHP_EOL);
     }
 
-    private function parseBundle(Collection $buf, int &$pos, int $endPos)
+    private function parseBundle(Collection $buf, int &$pos, int $endPos): Bundle
     {
         $time = Reader::parseTimetag($buf, $pos);
         $bundle = new Bundle($time);

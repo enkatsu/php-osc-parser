@@ -10,7 +10,8 @@ class Reader
 {
     public static function parseString(Collection $buf, int &$pos): string
     {
-        $lastIndex = $buf->slice($pos)->search(function($data) {
+        $lastIndex = $buf->slice($pos)->search(function($data)
+        {
             $bytes = collect(str_split($data, 2));
             return $bytes->last() == '00';
         });
@@ -30,7 +31,7 @@ class Reader
     public static function ParseFloat(Collection $buf, int &$pos)
     {
         $str = $buf->get($pos);
-        $value = unpack("f*", pack("h*", strrev($str)))[1];
+        $value = unpack('f*', pack('h*', strrev($str)))[1];
         $pos += 1;
         return $value;
     }
